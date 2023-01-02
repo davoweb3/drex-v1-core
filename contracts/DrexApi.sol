@@ -83,7 +83,7 @@ contract Client is ChainlinkClient {
         curr_volume = volume;
         Nft_interface nfti = Nft_interface(nft_contract);
         drex_token_interface erc20 = drex_token_interface(drex_token_contract);
-        erc20.tranferingfunds(nft_contract, amt_generated);
+        erc20.mint(msg.sender, nft_contract, amt_generated);
         nfti.update_nft_balance(amt_generated);
         emit TOKEN_TRANSFER(amt_generated);
     }

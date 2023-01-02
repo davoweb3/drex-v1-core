@@ -13,13 +13,13 @@ contract AdvancedCollectible is ERC721URIStorage {
         DREX1
     }
     // add other things
-    address public _token;
+    IERC20 public _token;
     IERC20 private _daiTokens;
     mapping(uint256 => address) public requestIdToSender;
     mapping(uint256 => string) public requestIdToTokenURI;
     mapping(uint256 => Breed) public tokenIdToBreed;
     mapping(uint256 => uint256) public requestIdToTokenId;
-    mapping(address => uint256) public tokenToOwner;
+    mapping(address => uint256[]) public tokenToOwner;
     mapping(uint256 => uint256) public participationValue;
     mapping(address => uint256) public ownerToValue;
     mapping(uint256 => uint256) public tokenidToValue;
@@ -45,7 +45,7 @@ contract AdvancedCollectible is ERC721URIStorage {
     // uint256 public curr_balance_for_each_token;
 
     constructor(
-        address erc_token_address,
+        IERC20 erc_token_address,
         IERC20 dai_token_address,
         address[] memory prevContracts,
         uint256 no_of_nfts
@@ -82,27 +82,27 @@ contract AdvancedCollectible is ERC721URIStorage {
 
     /// @notice Used to set each of the user who have bought the nft
     /// @param _wallet -> address of tge nft holder
-    function setWallet(address _wallet) public {
+    /// makes this function private
+    function setWallet(address _wallet) private {
         Wallets[_wallet] = true;
     }
 
     /// @notice Helper fucntion called by create_nft, calls the 'safemint fucntion'
     /// @param requestId -->a uint256 number unique for each nft
     /// @param RandomNumber -->  a uint256 number for each of the nft
-    function mint(uint256 requestId, uint256 RandomNumber) public {
+    /// this should be a internal function
+    function mint(uint256 requestId, uint256 RandomNumber) internal {
         address DrexOwner = requestIdToSender[requestId];
         string memory tokenURI = requestIdToTokenURI[requestId];
         uint256 newItemId = tokenCounter;
         _safeMint(Admin, newItemId);
-        _setTokenURI(newItemId, tokenURI);
+        //_setTokenURI(newItemId, tokenURI);
         setWallet(DrexOwner);
         Breed breed = Breed(RandomNumber % 1);
         tokenIdToBreed[newItemId] = breed;
         requestIdToTokenId[requestId] = newItemId;
 
-        // bug in the tokenToowner Mapping , have to fix it
-
-        tokenToOwner[DrexOwner] = newItemId;
+        tokenToOwner[DrexOwner].push(newItemId);
         tokenCounter = tokenCounter + 1;
         emit MINT(requestId, RandomNumber);
     }
@@ -110,6 +110,7 @@ contract AdvancedCollectible is ERC721URIStorage {
     ///@notice Sets tokenURI for each nft minted
     /// @param tokenId --> a tokenId of each of the nft
     /// @param _tokenURI --> string which refers the tokenuri for the nft
+    /// make it an internal function
     function setTokenURI(uint256 tokenId, string memory _tokenURI) public {
         require(
             _isApprovedOrOwner(_msgSender(), tokenId),
@@ -157,14 +158,32 @@ contract AdvancedCollectible is ERC721URIStorage {
         emit UPDATE_NFT_BALANCE(amount);
     }
 
+    ///@notice This function calculates the total drex tokens for each of the msg.sender
+    ///@param nft_holder --> address of the nft holder
+
+    function calculate_total_ammount(address nft_holder)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 amount_total = 0;
+        for (uint32 i = 0; i < tokenToOwner[nft_holder].length; i++) {
+            amount_total += tokenidToValue[tokenToOwner[nft_holder][i]];
+        }
+        return amount_total;
+    }
+
     /// @notice NFt holder claims there drexTokens to stable coins using this function
     function claim() public {
         require(Wallets[msg.sender] == true, "sender dont hold a nft");
-        token_Id = tokenToOwner[msg.sender];
-        address rec = payable(msg.sender);
-        amount_to_send = (tokenidToValue[token_Id]);
-        drex_token_interface erc20 = drex_token_interface(_token);
-        erc20.tranferingfunds(payable(rec), amount_to_send);
+        // token_Id = tokenToOwner[msg.sender];
+        address rec = (msg.sender);
+        amount_to_send = calculate_total_ammount(msg.sender);
+        _token.approve(address(this), amount_to_send);
+        _token.transferFrom(address(this), address(msg.sender), amount_to_send);
+        for (uint32 i = 0; i < tokenToOwner[msg.sender].length; i++) {
+            tokenidToValue[tokenToOwner[msg.sender][i]] = 0;
+        }
         emit CLAIM(msg.sender, amount_to_send);
     }
 }
