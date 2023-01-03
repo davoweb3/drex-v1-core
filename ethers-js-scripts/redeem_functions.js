@@ -4,24 +4,24 @@ const axios = require('axios')
 var fs = require('fs');
 
 //abis for each of the smart contracts
-var nft_parsed= JSON.parse(fs.readFileSync('./contracts/AdvancedCollectible.json'));
+var nft_parsed= JSON.parse(fs.readFileSync('../build/contracts/AdvancedCollectible.json'));
 var nft_abi = nft_parsed.abi;
-var parsed= JSON.parse(fs.readFileSync('./contracts/DrexTreasury.json'));
+var parsed= JSON.parse(fs.readFileSync('../build/contracts/DrexTreasury.json'));
 var treasury_abi = parsed.abi;
-var stable_parsed= JSON.parse(fs.readFileSync('./contracts/DRExStable.json'));
+var stable_parsed= JSON.parse(fs.readFileSync('../build/contracts/DRExStable.json'));
 var stable_abi = stable_parsed.abi;
-var parsed= JSON.parse(fs.readFileSync('./contracts/DRExToken.json'));
+var parsed= JSON.parse(fs.readFileSync('../build/contracts/DRExToken.json'));
 var drex_abi = parsed.abi;
-var dai_parsed = JSON.parse(fs.readFileSync('./contracts/DaiToken.json'));
+var dai_parsed = JSON.parse(fs.readFileSync('../build/contracts/DaiToken.json'));
 var dai_abi = dai_parsed.abi
 
 
 
 //deploying contracts using ethers 
 
-const DREX_TOKEN_CONTRACT = "0x7621005DD5Db3073968Df0Ee469e6f148960D6b0" // TODO: will need to update this token address later
-const drex_treasury = "0x9C4611bF1f8D1e8DEC4B8Ec75D75D84f648d0D3d"
-const NFT_CONTRACT_ADDRESS = '0x085b046b7528d8bc42354412df372ff2d261ce3c'
+const DREX_TOKEN_CONTRACT = "0xD86916F4c0cDBb6D6504A5e3494C15d83A417cf4" // TODO: will need to update this token address later
+const drex_treasury = "0xe002B222d4e0BE8E449c5e902Cd58678dcEcFe76"
+const NFT_CONTRACT_ADDRESS = '0xCfc7EaD87614B791a6d72A23A59D4c31434Bf85b'
 const drex_stable_coin = "0xf1CaC41C01477723f2F9473Ff60ad7cCB5Bdd4a5"
 const dai_tokens = "0x268a20877F514015C2a7bf6Ca4147e9DF42ff3CB"
 const nft_contract = new ethers.Contract(NFT_CONTRACT_ADDRESS,nft_abi,provider)
@@ -31,6 +31,7 @@ const drex_contract = new ethers.Contract(DREX_TOKEN_CONTRACT,drex_abi,provider)
 const dai_contract = new ethers.Contract(dai_tokens,dai_abi,provider)
 
 //public addr and private key for making calls
+console.log(nft_contract)
 
 const accountFrom = {
     address: '0xDcC33A14c3c52A0aD25C783C5f03052bBa78507b',
@@ -68,7 +69,6 @@ const create_nft = async (amount) => {
     console.log(minting_nft)
 
 }
-create_nft(500000)
 
 const dai_balance = async (wallet_addr) => {
     const balance = await dai_contract.balanceOf(wallet_addr)
