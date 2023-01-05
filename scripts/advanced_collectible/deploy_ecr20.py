@@ -13,4 +13,4 @@ def main():
     )
 
     time.sleep(0.1)
-    erc20Token.setAddress(erc20Token, {"from": dev})
+    erc20Token.set_address(erc20Token, {"from": dev})

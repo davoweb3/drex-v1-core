@@ -1,10 +1,10 @@
 from brownie import (
-    AdvancedCollectible,
+    AssetManagement,
     accounts,
     config,
     network,
     DaiToken,
-    AdvancedCollectible,
+    AssetManagement,
 )
 from scripts.helpful_script import get_breed, fund_advanced_collectible
 import time
@@ -30,8 +30,8 @@ def main():
 def creating_collectibe():
     dev = accounts.add(config["wallets"]["from_key"])
     print(dev)
-    advanced_collectible = AdvancedCollectible[
-        len(AdvancedCollectible) - 1
+    advanced_collectible = AssetManagement[
+        len(AssetManagement) - 1
     ]  # most recent deployment
     # fund_advanced_collectible(advanced_collectible.address)
     # print("sending link done")
@@ -40,13 +40,13 @@ def creating_collectibe():
 
     print("approving user to send tokens to contract ")
 
-    dai_token.approve(AdvancedCollectible[-1], 500000, {"from": dev})
+    dai_token.approve(AssetManagement[-1], 500000, {"from": dev})
 
-    transaction = advanced_collectible.create_nft("None", {"from": dev})
+    transaction = advanced_collectible.create_bond("None", {"from": dev})
     print("Waiting on second transaction...")
     # wait for the 2nd transaction
     transaction.wait(1)
-    requestId = transaction.events["CREATE_NFT"]["requestId"]
+    requestId = transaction.events["Create_Bond"]["requestId"]
     token_id = advanced_collectible.requestIdToTokenId(requestId)
     breed = get_breed(advanced_collectible.tokenIdToBreed(token_id))
     number_of_advanced_collectibles = advanced_collectible.tokenCounter()
@@ -66,7 +66,7 @@ def creating_collectibe():
 
 def write_metadata(token_id, nft_contract):
     collectible_metadata = sample_metadata.metadata_template
-    breed = get_breed(nft_contract.tokenIdToBreed(token_id))
+    breed = "dreX"
     metadata_file_name = (
         "./metadata/{}/".format("rinkeby") + str(token_id) + "-" + breed + ".json"
     )
@@ -75,7 +75,7 @@ def write_metadata(token_id, nft_contract):
         print("{} already found, delete it to overwrite!".format(metadata_file_name))
     else:
         print("Creating Metadata file: " + metadata_file_name)
-        collectible_metadata["name"] = get_breed(nft_contract.tokenIdToBreed(token_id))
+        collectible_metadata["name"] = "Drex"
         collectible_metadata[
             "description"
         ] = "This NFT represents a share of ownership in a pilot solar plant located in Guyaquil, Ecuador"

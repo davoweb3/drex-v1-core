@@ -1,11 +1,11 @@
-from brownie import accounts, network, config, AdvancedCollectible, DRExToken, Client
+from brownie import accounts, network, config, AssetManagement, DRExToken, Client
 from scripts.helpful_script import fund_advanced_collectible
 from dotenv import load_dotenv
 import os
 import time
 
 erc20 = DRExToken[-1]
-contract_to_transfer = AdvancedCollectible[-1]
+contract_to_transfer = AssetManagement[-1]
 
 
 def main():

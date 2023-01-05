@@ -2,70 +2,69 @@
 pragma solidity ^0.8.1;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./Our_ERC20.sol";
+import "./DRExToken.sol";
 
-interface Nft_interface {
+interface IUpdateBalance {
     function update_nft_balance(uint256 amount) external;
 }
 
-contract AdvancedCollectible is ERC721URIStorage {
-    enum Breed {
-        DREX1
-    }
-    // add other things
-    IERC20 public _token;
+contract AssetManagement is ERC721URIStorage {
+    // enum Breed {
+    //     DREX1
+    // }
+    IERC20 public _drexToken;
     IERC20 private _daiTokens;
     mapping(uint256 => address) public requestIdToSender;
     mapping(uint256 => string) public requestIdToTokenURI;
-    mapping(uint256 => Breed) public tokenIdToBreed;
+    // mapping(uint256 => Breed) public tokenIdToBreed;
     mapping(uint256 => uint256) public requestIdToTokenId;
     mapping(address => uint256[]) public tokenToOwner;
-    mapping(uint256 => uint256) public participationValue;
+    // mapping(uint256 => uint256) public participationValue;
     mapping(address => uint256) public ownerToValue;
     mapping(uint256 => uint256) public tokenidToValue;
     mapping(address => bool) public Wallets;
     address[] public previousContracts;
 
     //events
-    event CREATE_NFT(uint256 indexed requestId);
-    event CLAIM(address _destAddr, uint256 _amount);
-    event UPDATE_NFT_BALANCE(uint256 amount);
-    event MINT(uint256 indexed requestId, uint256 randomNumber);
+    event Create_Bond(uint256 indexed requestId);
+    event Claim(address _destAddr, uint256 _amount);
+    event Update_Balance(uint256 amount);
+    event Mint(uint256 indexed requestId);
 
-    uint256 public totalTokenTransfered; //amount of drex tokens transfered till date
+    uint256 public totalTokensTransferred; //amount of drex tokens transfered till date
     uint256 public tokenCounter;
-    uint256 public fParticipation;
+    // uint256 public fParticipation;
     uint256 public RequestId; //hardcoded value
-    uint256 public randomNumber; //harcoded value
-    address public Admin;
-    uint256 public nft_count;
-    uint256 public amount_to_send;
-    uint256 public token_Id;
+    // uint256 public randomNumber; //harcoded value
+    address public admin;
+    uint256 public nftCount;
+    uint256 public sendAmount;
+    uint256 public tokenId;
 
     // uint256 public curr_balance_for_each_token;
 
     constructor(
-        IERC20 erc_token_address,
+        IERC20 drex_token_address,
         IERC20 dai_token_address,
         address[] memory prevContracts,
-        uint256 no_of_nfts
+        uint256 nft_Count
     ) public ERC721("DREX", "DRx") {
-        Admin = msg.sender;
+        admin = msg.sender;
         previousContracts = prevContracts;
-        _token = erc_token_address;
+        _drexToken = drex_token_address;
         _daiTokens = dai_token_address;
         RequestId = 1;
-        randomNumber = 10;
         tokenCounter = 0;
-        totalTokenTransfered = 0;
-        nft_count = no_of_nfts;
-        amount_to_send = 0;
+        totalTokensTransferred = 0;
+        nftCount = nft_Count;
+        sendAmount = 0;
         // curr_balance_for_each_token = 0;
     }
 
+    ///remove the random number
     /// @notice Creates the nft
     /// @param  tokenURI -> the token uri of the each nft, it can be empty also
-    function create_nft(string memory tokenURI) public payable {
+    function create_bond(string memory tokenURI) public payable {
         require(
             _daiTokens.balanceOf(msg.sender) > 50000,
             "balance not enought to mint nft"
@@ -74,10 +73,10 @@ contract AdvancedCollectible is ERC721URIStorage {
         uint256 requestId = RequestId; //requestRandomness(keyHash, fee);
         requestIdToSender[requestId] = msg.sender;
         requestIdToTokenURI[requestId] = tokenURI;
-        mint(requestId, randomNumber);
+        mint(requestId);
         RequestId = RequestId + 1;
-        randomNumber = randomNumber + 1;
-        emit CREATE_NFT(requestId);
+        // randomNumber = randomNumber + 1;
+        emit Create_Bond(requestId);
     }
 
     /// @notice Used to set each of the user who have bought the nft
@@ -89,22 +88,22 @@ contract AdvancedCollectible is ERC721URIStorage {
 
     /// @notice Helper fucntion called by create_nft, calls the 'safemint fucntion'
     /// @param requestId -->a uint256 number unique for each nft
-    /// @param RandomNumber -->  a uint256 number for each of the nft
+
     /// this should be a internal function
-    function mint(uint256 requestId, uint256 RandomNumber) internal {
+    function mint(uint256 requestId) internal {
         address DrexOwner = requestIdToSender[requestId];
         string memory tokenURI = requestIdToTokenURI[requestId];
         uint256 newItemId = tokenCounter;
-        _safeMint(Admin, newItemId);
+        _safeMint(admin, newItemId);
         //_setTokenURI(newItemId, tokenURI);
         setWallet(DrexOwner);
-        Breed breed = Breed(RandomNumber % 1);
-        tokenIdToBreed[newItemId] = breed;
+        // Breed breed = Breed(RandomNumber % 1);
+        // tokenIdToBreed[newItemId] = breed;
         requestIdToTokenId[requestId] = newItemId;
 
         tokenToOwner[DrexOwner].push(newItemId);
         tokenCounter = tokenCounter + 1;
-        emit MINT(requestId, RandomNumber);
+        emit Mint(requestId);
     }
 
     ///@notice Sets tokenURI for each nft minted
@@ -120,17 +119,17 @@ contract AdvancedCollectible is ERC721URIStorage {
     }
 
     //correct this functions --> find new function for each contract
-    function participationCalculation() public {
-        require(previousContracts.length > 0, "this is the first contract");
+    // function participationCalculation() public {
+    //     require(previousContracts.length > 0, "this is the first contract");
 
-        //needs another check to remove the first contract after 25 years or after 25 contracts have been created
+    //     //needs another check to remove the first contract after 25 years or after 25 contracts have been created
 
-        uint256 totalContracts = previousContracts.length + 1;
-        uint256 totalNfts = totalContracts * nft_count; //no of nfts per collection is a variable and find a way to make it variable
-        uint256 fEmission = nft_count / totalNfts; //decide how to deal with floating points --> need to be different for each collection
-        uint256 fYear = 1 / totalContracts;
-        fParticipation = (fEmission + fYear) / 2;
-    }
+    //     uint256 totalContracts = previousContracts.length + 1;
+    //     uint256 totalNfts = totalContracts * nft_count; //no of nfts per collection is a variable and find a way to make it variable
+    //     uint256 fEmission = nft_count / totalNfts; //decide how to deal with floating points --> need to be different for each collection
+    //     uint256 fYear = 1 / totalContracts;
+    //     fParticipation = (fEmission + fYear) / 2;
+    // }
 
     // function participationReturns() public {
     //     uint256 erc20balance = _token.balanceOf(address(this));
@@ -151,21 +150,17 @@ contract AdvancedCollectible is ERC721URIStorage {
     /// @notice Divides the amount generated in each of the nft holders
     /// @param amount --> amount generated and transfered to the contract
     function update_nft_balance(uint256 amount) external {
-        uint256 curr_balance_for_each_token = amount / (nft_count);
-        for (uint256 token_id = 0; token_id < nft_count; token_id++) {
+        uint256 curr_balance_for_each_token = amount / (nftCount);
+        for (uint256 token_id = 0; token_id < nftCount; token_id++) {
             tokenidToValue[token_id] += curr_balance_for_each_token;
         }
-        emit UPDATE_NFT_BALANCE(amount);
+        emit Update_Balance(amount);
     }
 
     ///@notice This function calculates the total drex tokens for each of the msg.sender
     ///@param nft_holder --> address of the nft holder
 
-    function calculate_total_ammount(address nft_holder)
-        public
-        view
-        returns (uint256)
-    {
+    function get_total_drex(address nft_holder) public view returns (uint256) {
         uint256 amount_total = 0;
         for (uint32 i = 0; i < tokenToOwner[nft_holder].length; i++) {
             amount_total += tokenidToValue[tokenToOwner[nft_holder][i]];
@@ -178,12 +173,12 @@ contract AdvancedCollectible is ERC721URIStorage {
         require(Wallets[msg.sender] == true, "sender dont hold a nft");
         // token_Id = tokenToOwner[msg.sender];
         address rec = (msg.sender);
-        amount_to_send = calculate_total_ammount(msg.sender);
-        _token.approve(address(this), amount_to_send);
-        _token.transferFrom(address(this), address(msg.sender), amount_to_send);
+        sendAmount = get_total_drex(msg.sender);
+        _drexToken.approve(address(this), sendAmount);
+        _drexToken.transferFrom(address(this), address(msg.sender), sendAmount);
         for (uint32 i = 0; i < tokenToOwner[msg.sender].length; i++) {
             tokenidToValue[tokenToOwner[msg.sender][i]] = 0;
         }
-        emit CLAIM(msg.sender, amount_to_send);
+        emit Claim(msg.sender, sendAmount);
     }
 }

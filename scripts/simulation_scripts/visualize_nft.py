@@ -1,10 +1,10 @@
 from brownie import (
-    AdvancedCollectible,
+    AssetManagement,
     accounts,
     config,
     network,
     DaiToken,
-    AdvancedCollectible,
+    AssetManagement,
 )
 from scripts.helpful_script import get_breed, fund_advanced_collectible
 import time
@@ -18,7 +18,7 @@ import requests
 load_dotenv()
 os.environ["UPLOAD_IPFS"] = "true"
 
-nft_contract = AdvancedCollectible[-1]
+nft_contract = AssetManagement[-1]
 
 
 def main():

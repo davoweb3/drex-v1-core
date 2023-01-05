@@ -5,7 +5,7 @@ pragma solidity ^0.8.1;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface drex_token_interface {
+interface IDRExToken {
     function mint(
         address sender,
         address to,
@@ -14,20 +14,20 @@ interface drex_token_interface {
 }
 
 contract DRExToken is ERC20 {
-    IERC20 private _token;
-    uint256 public totalTokenSupplied;
+    IERC20 private _drexToken;
+    uint256 public tokensSupplied;
     address public owner;
 
     constructor() ERC20("DREx", "DRX") {
-        totalTokenSupplied = 0;
+        tokensSupplied = 0;
         owner = msg.sender;
     }
 
     /// @notice Set the address of erc20 token
     /// @param token -->  address of the erc20 token
-    function setAddress(IERC20 token) public {
+    function set_address(IERC20 token) public {
         require(msg.sender == owner, "you are not the owner");
-        _token = token;
+        _drexToken = token;
     }
 
     // / @notice this function is used to transfer funds to the given address and a given amount
@@ -49,6 +49,6 @@ contract DRExToken is ERC20 {
     ) external {
         require(sender == owner, "you are not the owner");
         _mint(holder, ammount);
-        totalTokenSupplied += ammount;
+        tokensSupplied += ammount;
     }
 }

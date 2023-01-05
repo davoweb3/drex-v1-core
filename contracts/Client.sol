@@ -3,8 +3,8 @@
 pragma solidity ^0.8.1;
 
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
-import "./AdvancedCollectible.sol";
-import "./Our_ERC20.sol";
+import "./AssetManagement.sol";
+import "./DRExToken.sol";
 
 contract Client is ChainlinkClient {
     using Chainlink for Chainlink.Request;
@@ -18,7 +18,7 @@ contract Client is ChainlinkClient {
     uint256 public curr_volume;
 
     //events
-    event TOKEN_TRANSFER(uint256 transferd_amout);
+    event Token_Transfer(uint256 transferd_amout);
 
     /**
     This example uses the LINK token address on Moonbase Alpha.
@@ -81,10 +81,10 @@ contract Client is ChainlinkClient {
     function token_transfer() public {
         uint256 amt_generated = volume - curr_volume;
         curr_volume = volume;
-        Nft_interface nfti = Nft_interface(nft_contract);
-        drex_token_interface erc20 = drex_token_interface(drex_token_contract);
+        IUpdateBalance nfti = IUpdateBalance(nft_contract);
+        IDRExToken erc20 = IDRExToken(drex_token_contract);
         erc20.mint(msg.sender, nft_contract, amt_generated);
         nfti.update_nft_balance(amt_generated);
-        emit TOKEN_TRANSFER(amt_generated);
+        emit Token_Transfer(amt_generated);
     }
 }
