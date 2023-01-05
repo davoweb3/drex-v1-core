@@ -3,7 +3,7 @@ from brownie import (
     network,
     interface,
     config,
-    AdvancedCollectible,
+    AssetManagement,
     DRExToken,
     DaiToken,
     DrexTreasury,

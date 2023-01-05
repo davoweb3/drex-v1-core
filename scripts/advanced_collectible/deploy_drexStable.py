@@ -2,7 +2,7 @@ from brownie import (
     accounts,
     network,
     config,
-    AdvancedCollectible,
+    AssetManagement,
     DRExToken,
     DRExStable,
 )
@@ -22,4 +22,4 @@ def main():
     )
 
     time.sleep(0.1)
-    drexStable.setAddress(drexStable, {"from": dev})
+    drexStable.set_address(drexStable, {"from": dev})

@@ -1,4 +1,4 @@
-from brownie import accounts, network, config, AdvancedCollectible, DRExToken, DaiToken
+from brownie import accounts, network, config, DRExToken, DaiToken, AssetManagement
 from scripts.helpful_script import fund_advanced_collectible
 from dotenv import load_dotenv
 import os
@@ -29,7 +29,7 @@ def main():
     for i in address_list:
         address_array.append(i[:-1])
     add_file.close()
-    advancedCollectible = AdvancedCollectible.deploy(
+    assetManagement = AssetManagement.deploy(
         erc20Token,
         daiToken,
         address_array,
@@ -38,10 +38,10 @@ def main():
         publish_source=False,
     )
     add_file = open("address.txt", "a")
-    add_file.write(str(advancedCollectible) + "\n")
+    add_file.write(str(assetManagement) + "\n")
     add_file.close()
     # # fund_advanced_collectible(advancedCollectible)
-    return advancedCollectible
+    return assetManagement
 
 
 # advance_collectible -> 0x3f09Bc94D43DE9a7Fdfd52a1750D40dc4E99D122

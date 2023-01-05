@@ -1,27 +1,27 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.1;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./Our_ERC20.sol";
-import "./Drex_stableCoin.sol";
+import "./DRExToken.sol";
+import "./DRExStable.sol";
 
 contract DrexTreasury {
     //varibales required in smart contract
     // IERC20 private drex_stable;
     // IERC20 private drex_tokens;
-    DRExToken public drex_token;
-    DRExStable public drex_stable;
+    DRExToken public drexToken;
+    DRExStable public drexStable;
     address private owner;
-    mapping(bytes32 => address) public reqTosender;
-    uint256 random_amount;
+    // mapping(bytes32 => address) public reqTosender;
+    // uint256 random_amount;
 
     // events
-    event TransferSent(address _destAddr, uint256 _amount);
+    event Transfer_Sent(address _destAddr, uint256 _amount);
 
-    constructor(address stable_coin_address, address drex_token_address)
+    constructor(address drex_stable_address, address drex_token_address)
         public
     {
-        drex_stable = DRExStable(stable_coin_address);
-        drex_token = DRExToken(drex_token_address);
+        drexStable = DRExStable(drex_stable_address);
+        drexToken = DRExToken(drex_token_address);
         owner = msg.sender;
     }
 
@@ -34,12 +34,12 @@ contract DrexTreasury {
     /// @param amount --> the amount smes will be paying
     function pay_fees(uint256 amount) public payable {
         require(
-            drex_stable.balanceOf(msg.sender) > amount,
+            drexStable.balanceOf(msg.sender) > amount,
             "Balance not enough,please recharge"
         );
 
-        drex_stable.transferFrom(msg.sender, address(this), amount);
-        emit TransferSent(address(this), random_amount);
+        drexStable.transferFrom(msg.sender, address(this), amount);
+        emit Transfer_Sent(address(this), amount);
     }
 
     //wallet of owener --> 100 drexCoins ---> 100drexCoins and in return they will  get 100drexStablecoins
@@ -48,23 +48,23 @@ contract DrexTreasury {
 
     function redeem() public {
         require(
-            drex_token.balanceOf(msg.sender) > 0,
+            drexToken.balanceOf(msg.sender) > 0,
             "Owner should have some drex tokens to convert them into stable coins"
         );
         require(
-            drex_stable.balanceOf(address(this)) >
-                drex_token.balanceOf(msg.sender),
+            drexStable.balanceOf(address(this)) >
+                drexToken.balanceOf(msg.sender),
             "not enough stable coins"
         );
-        uint256 total_transfer = drex_token.balanceOf(msg.sender);
-        drex_token.transferFrom(msg.sender, address(this), total_transfer);
+        uint256 total_transfer = drexToken.balanceOf(msg.sender);
+        drexToken.transferFrom(msg.sender, address(this), total_transfer);
 
         //approving the user to take the drex_token
-        drex_stable.approve(address(this), total_transfer);
-        drex_stable.transferFrom(address(this), address(msg.sender), 10);
+        drexStable.approve(address(this), total_transfer);
+        drexStable.transferFrom(address(this), address(msg.sender), 10);
     }
 
     function transfer_to_owner() public isOwner {
-        drex_token.approve(owner, drex_token.balanceOf(address(this)));
+        drexToken.approve(owner, drexToken.balanceOf(address(this)));
     }
 }
