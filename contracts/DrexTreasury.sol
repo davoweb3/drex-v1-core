@@ -5,14 +5,9 @@ import "./DRExToken.sol";
 import "./DRExStable.sol";
 
 contract DrexTreasury {
-    //varibales required in smart contract
-    // IERC20 private drex_stable;
-    // IERC20 private drex_tokens;
     DRExToken public drexToken;
     DRExStable public drexStable;
     address private owner;
-    // mapping(bytes32 => address) public reqTosender;
-    // uint256 random_amount;
 
     // events
     event Transfer_Sent(address _destAddr, uint256 _amount);
@@ -41,8 +36,6 @@ contract DrexTreasury {
         drexStable.transferFrom(msg.sender, address(this), amount);
         emit Transfer_Sent(address(this), amount);
     }
-
-    //wallet of owener --> 100 drexCoins ---> 100drexCoins and in return they will  get 100drexStablecoins
 
     /// @notice This function is used by nft owner to convert their drexTokens to drexStable coins
 

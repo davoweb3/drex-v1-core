@@ -30,14 +30,6 @@ contract DRExToken is ERC20 {
         _drexToken = token;
     }
 
-    // / @notice this function is used to transfer funds to the given address and a given amount
-    // / @param to --> address of the reciever
-    // / @param amt --> ammount to be transfered
-    // function tranferingfunds(address payable to, uint256 amt) external {
-    //     totalTokenSupplied += amt;
-    //     _token.transfer(to, amt);
-    // }
-
     ///@notice This function is used to mint new drex tokens
     ///@param sender --> address of the sender for the require function
     ///@param holder --> the address of the contract where tokens should be minted
