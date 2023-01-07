@@ -16,10 +16,8 @@ contract AssetManagement is ERC721URIStorage {
     IERC20 private _daiTokens;
     mapping(uint256 => address) public requestIdToSender;
     mapping(uint256 => string) public requestIdToTokenURI;
-    // mapping(uint256 => Breed) public tokenIdToBreed;
     mapping(uint256 => uint256) public requestIdToTokenId;
     mapping(address => uint256[]) public tokenToOwner;
-    // mapping(uint256 => uint256) public participationValue;
     mapping(address => uint256) public ownerToValue;
     mapping(uint256 => uint256) public tokenidToValue;
     mapping(address => bool) public Wallets;
@@ -35,13 +33,10 @@ contract AssetManagement is ERC721URIStorage {
     uint256 public tokenCounter;
     // uint256 public fParticipation;
     uint256 public RequestId; //hardcoded value
-    // uint256 public randomNumber; //harcoded value
     address public admin;
     uint256 public nftCount;
     uint256 public sendAmount;
     uint256 public tokenId;
-
-    // uint256 public curr_balance_for_each_token;
 
     constructor(
         IERC20 drex_token_address,
@@ -58,7 +53,6 @@ contract AssetManagement is ERC721URIStorage {
         totalTokensTransferred = 0;
         nftCount = nft_Count;
         sendAmount = 0;
-        // curr_balance_for_each_token = 0;
     }
 
     ///remove the random number
@@ -89,18 +83,13 @@ contract AssetManagement is ERC721URIStorage {
     /// @notice Helper fucntion called by create_nft, calls the 'safemint fucntion'
     /// @param requestId -->a uint256 number unique for each nft
 
-    /// this should be a internal function
     function mint(uint256 requestId) internal {
         address DrexOwner = requestIdToSender[requestId];
         string memory tokenURI = requestIdToTokenURI[requestId];
         uint256 newItemId = tokenCounter;
         _safeMint(admin, newItemId);
-        //_setTokenURI(newItemId, tokenURI);
         setWallet(DrexOwner);
-        // Breed breed = Breed(RandomNumber % 1);
-        // tokenIdToBreed[newItemId] = breed;
         requestIdToTokenId[requestId] = newItemId;
-
         tokenToOwner[DrexOwner].push(newItemId);
         tokenCounter = tokenCounter + 1;
         emit Mint(requestId);
@@ -117,35 +106,6 @@ contract AssetManagement is ERC721URIStorage {
         );
         _setTokenURI(tokenId, _tokenURI);
     }
-
-    //correct this functions --> find new function for each contract
-    // function participationCalculation() public {
-    //     require(previousContracts.length > 0, "this is the first contract");
-
-    //     //needs another check to remove the first contract after 25 years or after 25 contracts have been created
-
-    //     uint256 totalContracts = previousContracts.length + 1;
-    //     uint256 totalNfts = totalContracts * nft_count; //no of nfts per collection is a variable and find a way to make it variable
-    //     uint256 fEmission = nft_count / totalNfts; //decide how to deal with floating points --> need to be different for each collection
-    //     uint256 fYear = 1 / totalContracts;
-    //     fParticipation = (fEmission + fYear) / 2;
-    // }
-
-    // function participationReturns() public {
-    //     uint256 erc20balance = _token.balanceOf(address(this));
-    //     require(
-    //         _token.balanceOf(address(this)) > 100,
-    //         "balance not sufficient"
-    //     );
-    //     uint256 costTosend = (erc20balance * fParticipation) / 100;
-    //     for (uint256 holder = 0; holder < previousContracts.length; holder++) {
-    //         address to = previousContracts[holder];
-    //         _token.transfer(to, costTosend);
-    //         erc20balance -= costTosend;
-    //         // event for transfering funds from token pool to particular contract
-    //         emit CLAIM(to, costTosend);
-    //     }
-    // }
 
     /// @notice Divides the amount generated in each of the nft holders
     /// @param amount --> amount generated and transfered to the contract

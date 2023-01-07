@@ -2,12 +2,10 @@ from brownie import (
     AssetManagement,
     accounts,
     config,
-    network,
     DaiToken,
     AssetManagement,
 )
 from scripts.helpful_script import get_breed, fund_advanced_collectible
-import time
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -30,14 +28,7 @@ def main():
 def creating_collectibe():
     dev = accounts.add(config["wallets"]["from_key"])
     print(dev)
-    advanced_collectible = AssetManagement[
-        len(AssetManagement) - 1
-    ]  # most recent deployment
-    # fund_advanced_collectible(advanced_collectible.address)
-    # print("sending link done")
-
-    # approve function to allow the contract to transfer dai from user to contract
-
+    advanced_collectible = AssetManagement[len(AssetManagement) - 1]
     print("approving user to send tokens to contract ")
 
     dai_token.approve(AssetManagement[-1], 500000, {"from": dev})
@@ -61,16 +52,13 @@ def creating_collectibe():
     print(token_uri)
 
 
-# this function returns the token uri --> call this to get the token uri
-
-
 def write_metadata(token_id, nft_contract):
     collectible_metadata = sample_metadata.metadata_template
     breed = "dreX"
     metadata_file_name = (
         "./metadata/{}/".format("rinkeby") + str(token_id) + "-" + breed + ".json"
     )
-    print(metadata_file_name)  # newly added line ----
+    print(metadata_file_name)
     if Path(metadata_file_name).exists():
         print("{} already found, delete it to overwrite!".format(metadata_file_name))
     else:
@@ -91,9 +79,6 @@ def write_metadata(token_id, nft_contract):
             return token_uri
 
 
-# curl -X POST -F file=@metadata/rinkeby/0-SHIBA_INU.json http://localhost:5001/api/v0/add
-
-
 def upload_to_ipfs(filepath):
     with Path(filepath).open("rb") as fp:
         image_binary = fp.read()
@@ -109,18 +94,9 @@ def upload_to_ipfs(filepath):
     return None
 
 
-# drex_meta_dic = {
-#     "DREX1": "https://ipfs.io/ipfs/QmPSvV47hgs8PcfjzUdDfgga5dwQCLA5N9zSP8bxCB7RtA?filename=0-DREX1.json",
-#     "DREX3": "https://ipfs.io/ipfs/QmWDZd4V3VigGJfNCPzMaMwCn1N2QMtuVaRpKR7kGkLpsL?filename=0-DREX1.json",
-#     "DREX2": "https://ipfs.io/ipfs/QmWDZd4V3VigGJfNCPzMaMwCn1N2QMtuVaRpKR7kGkLpsL?filename=0-DREX1.json",
-# }
-
-OPENSEA_FORMAT = "https://testnets.opensea.io/assests/rinkeby/{}/{}"
-
-
 def allotingTokenUri(token_id, token_uri):
     print("in alloting function", token_uri)
-    advanced_collectible = AdvancedCollectible[len(AdvancedCollectible) - 1]
+    advanced_collectible = AssetManagement[len(AssetManagement) - 1]
     number_of_advanced_collectibles = advanced_collectible.tokenCounter()
     print(
         "The number of tokens you've deployed is: "
@@ -137,8 +113,4 @@ def set_tokenURI(token_id, nft_contract, tokenURI):
     print("in set uri fucntions", tokenURI)
     dev = accounts.add(config["wallets"]["from_key"])
     nft_contract.setTokenURI(token_id, tokenURI, {"from": dev})
-    print(
-        "Awesome! You can view your NFT at {}".format(
-            OPENSEA_FORMAT.format(nft_contract.address, token_id)
-        )
-    )
+    print("setting tokenURI done")

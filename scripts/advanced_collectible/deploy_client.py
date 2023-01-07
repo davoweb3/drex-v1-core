@@ -20,8 +20,3 @@ def main():
     time.sleep(4)
     curr_value = client.volume()
     print(curr_value)
-    # while True:
-    #     print("GOING THE LOOP")
-    #     client.request_sensor_data({"from": dev})
-    #     time.sleep(10)
-    #     print(client.volume())

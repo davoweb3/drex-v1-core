@@ -30,11 +30,7 @@ def main():
 def creating_collectibe():
     dev = accounts.add(config["wallets"]["from_key"])
     print(dev)
-    advanced_collectible = AssetManagement[
-        len(AssetManagement) - 1
-    ]  # most recent deployment
-    # fund_advanced_collectible(advanced_collectible.address)
-    # print("sending link done")
+    advanced_collectible = AssetManagement[len(AssetManagement) - 1]
 
     # approve function to allow the contract to transfer dai from user to contract
 

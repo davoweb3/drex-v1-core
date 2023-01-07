@@ -16,7 +16,4 @@ def main():
     token_id = nft_contract.tokenToOwner(dev)
     value = nft_contract.tokenidToValue(token_id)
     print(value)
-    # nft_contract.approve_erc_20(dev, (value * 10**19), {"from": dev})
-    # print(drex_token.allowance(nft_contract, dev))
-    # time.sleep(10)
     nft_contract.claim({"from": dev})
