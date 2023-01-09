@@ -54,7 +54,11 @@ contract DrexTreasury {
 
         //approving the user to take the drex_token
         drexStable.approve(address(this), total_transfer);
-        drexStable.transferFrom(address(this), address(msg.sender), 10);
+        drexStable.transferFrom(
+            address(this),
+            address(msg.sender),
+            total_transfer
+        );
     }
 
     function transfer_to_owner() public isOwner {
