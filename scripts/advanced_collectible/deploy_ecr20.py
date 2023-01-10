@@ -1,5 +1,4 @@
-from brownie import accounts, network, config, AdvancedCollectible, DRExToken
-from scripts.helpful_script import fund_advanced_collectible
+from brownie import accounts, network, config, AssetManagement, DRExToken
 
 from dotenv import load_dotenv
 import os

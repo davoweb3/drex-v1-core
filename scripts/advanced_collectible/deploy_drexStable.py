@@ -6,8 +6,6 @@ from brownie import (
     DRExToken,
     DRExStable,
 )
-from scripts.helpful_script import fund_advanced_collectible
-
 from dotenv import load_dotenv
 import os
 import time

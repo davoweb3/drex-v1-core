@@ -1,5 +1,4 @@
 from brownie import accounts, network, config, AssetManagement, DRExToken, Client
-from scripts.helpful_script import fund_advanced_collectible
 from dotenv import load_dotenv
 import os
 import time
