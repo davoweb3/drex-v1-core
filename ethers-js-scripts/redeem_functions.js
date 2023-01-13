@@ -21,7 +21,7 @@ var dai_abi = dai_parsed.abi
 
 const DREX_TOKEN_CONTRACT = "0xD86916F4c0cDBb6D6504A5e3494C15d83A417cf4" // TODO: will need to update this token address later
 const drex_treasury = "0xe002B222d4e0BE8E449c5e902Cd58678dcEcFe76"
-const NFT_CONTRACT_ADDRESS = '0xCfc7EaD87614B791a6d72A23A59D4c31434Bf85b'
+const NFT_CONTRACT_ADDRESS = '0x64AF16F6a7757b1BC38082E0C0AdDaA2F3AEEb65'
 const drex_stable_coin = "0xf1CaC41C01477723f2F9473Ff60ad7cCB5Bdd4a5"
 const dai_tokens = "0x268a20877F514015C2a7bf6Ca4147e9DF42ff3CB"
 const nft_contract = new ethers.Contract(NFT_CONTRACT_ADDRESS,nft_abi,provider)
@@ -131,3 +131,17 @@ const redemption = async () => {
     console.log(x)
 }
 
+///@notice -> this function  gives the token ids owned by a particular owner
+///@params -> owner_address -> address of the token owner
+
+
+const tokenOwner = async (owner_address) => {
+    const token_count = await nft_contract.nftCountToOwner(owner_address)
+    for (let i = 0; i < token_count; i++){
+        token_id = await nft_contract.tokenToOwner(owner_address,i)
+        console.log(token_id,"token_ids")
+    }
+    console.log(token_count)
+}
+
+tokenOwner(accountFrom["address"])
