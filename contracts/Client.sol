@@ -26,8 +26,8 @@ contract Client is ChainlinkClient {
     */
     constructor(address payable nft_address, address erc20_address) {
         setChainlinkToken(address(0xa36085F69e2889c224210F603D836748e7dC0088));
-        oracle = 0xD4D9ac4ecF5dDf18056ce6A91d0a8E7B0c910ccE;
-        jobId = "79abc1e36be340a697e2b49dd2d86798";
+        oracle = 0x54Fd6C2959259384CE5501Aa45aBFfd1c7613b86;
+        jobId = "871fa6d928dc4a408da573bb44b5e553";
         fee = 0;
         nft_contract = nft_address;
         drex_token_contract = erc20_address;
