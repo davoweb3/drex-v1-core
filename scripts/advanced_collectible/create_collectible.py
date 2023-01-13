@@ -5,7 +5,6 @@ from brownie import (
     DaiToken,
     AssetManagement,
 )
-from scripts.helpful_script import get_breed, fund_advanced_collectible
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -39,7 +38,7 @@ def creating_collectibe():
     transaction.wait(1)
     requestId = transaction.events["Create_Bond"]["requestId"]
     token_id = advanced_collectible.requestIdToTokenId(requestId)
-    breed = get_breed(advanced_collectible.tokenIdToBreed(token_id))
+    breed = "DREX"
     number_of_advanced_collectibles = advanced_collectible.tokenCounter()
     print(
         "The number of tokens you've deployed is: "
