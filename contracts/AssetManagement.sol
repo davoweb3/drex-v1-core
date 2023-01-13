@@ -20,6 +20,7 @@ contract AssetManagement is ERC721URIStorage {
     mapping(address => uint256[]) public tokenToOwner;
     mapping(address => uint256) public ownerToValue;
     mapping(uint256 => uint256) public tokenidToValue;
+    mapping(address => uint256) public nftCountToOwner;
     mapping(address => bool) public Wallets;
     address[] public previousContracts;
 
@@ -91,6 +92,7 @@ contract AssetManagement is ERC721URIStorage {
         setWallet(DrexOwner);
         requestIdToTokenId[requestId] = newItemId;
         tokenToOwner[DrexOwner].push(newItemId);
+        nftCountToOwner[DrexOwner] += 1;
         tokenCounter = tokenCounter + 1;
         emit Mint(requestId);
     }
