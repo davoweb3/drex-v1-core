@@ -60,11 +60,11 @@ const setTokenURI = async (token_id,token_uri) => {
 
 ///@notice -> this function mints the nft from nft_contract
 ///@param amount --> amount required to mint the nft
-const create_nft = async (amount) => {
+const create_bonds = async (amount) => {
     const connectwallet = nft_contract.connect(wallet)
     const token_id = await nft_contract.tokenCounter()
     const approve_dai = await approve_dai_tokens(amount)
-    const minting_nft = await connectwallet.create_nft("")
+    const minting_nft = await connectwallet.create_bond("")
     // .then(() => setTokenURI(token_id,""))
     console.log(minting_nft)
 
