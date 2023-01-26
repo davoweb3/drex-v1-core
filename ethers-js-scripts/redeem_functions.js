@@ -107,7 +107,7 @@ const approve_tokens_drex_tokens = async (amount) => {
 ///@param amount -> the amount of dai token to approve
 const approve_dai_tokens = async (amount) => {
     const connectwallet = dai_contract.connect(wallet)
-    const approved = await connectwallet.approve(accountFrom["address"],amount)
+    const approved = await connectwallet.approve(NFT_CONTRACT_ADDRESS,amount)
     console.log(approved)
 }
 
